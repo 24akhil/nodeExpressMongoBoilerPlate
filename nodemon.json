@@ -1,0 +1,7 @@
+{
+    "env": {
+        "MONGO_ATLAS_PW": "Rwsm@2012",
+        "DB_CONNECTION_STRING": "mongodb+srv://akhil:Rwsm@2012@cluster0.izl43.mongodb.net/akhilDB?retryWrites=true",
+        "JWT_KEY": "secret"
+    }
+}

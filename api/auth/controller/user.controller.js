@@ -1,7 +1,7 @@
-const User = require("./user.model");
-//  require("../models/role.model");
+const User = require("../model/user.model");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt"); //Pkg required for encryption purpose.
+const constants = require('../helper/constants');
 
 
 //create a user
@@ -60,11 +60,12 @@ exports.user_get_all = (req, res, next) => {
     User.find({})
         .populate('role')
         .exec()
-        .then(doc => {            
+        .then(doc => {
+
             res.status(200).json(
                 {
                     count: doc.length,
-                    users: doc.map(u => {                      
+                    users: doc.map(u => {
                         return {
                             _id: u._id,
                             name: u.name,
@@ -84,12 +85,14 @@ exports.user_get_all = (req, res, next) => {
 //update
 exports.user_update = (req, res, next) => {
     mongoose.set('useFindAndModify', false);
-    const updateOps = {};
+    let updateOps = {};
     for (const ops of req.body) {
-        updateOps[ops.propName] = ops.value;
-    }
 
-    User.findByIdAndUpdate(updateOps._id, updateOps)
+        if (constants.userUpdateProp.includes(ops.name))
+            updateOps[ops.name] = ops.value;
+    }   
+
+    User.findByIdAndUpdate(updateOps._id, updateOps, { new: true })
         .then(result => {
             return res.status(201).json(result);
         })

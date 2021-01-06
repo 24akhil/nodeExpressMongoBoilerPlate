@@ -1,1 +1,0 @@
-const i = require('./user.model')

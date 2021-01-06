@@ -1,4 +1,5 @@
 const User = require("./user.model");
+//  require("../models/role.model");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt"); //Pkg required for encryption purpose.
 
@@ -10,7 +11,7 @@ exports.user_create = (req, res, next) => {
         .then(user => {
 
             if (user.length >= 1) {
-                return res.status(404).json({
+                return res.status(409).json({
                     message: "Mail exists"
                 });
             }
@@ -56,18 +57,20 @@ exports.user_create = (req, res, next) => {
 
 //get all
 exports.user_get_all = (req, res, next) => {
-    User.find()
-        .then(doc => {
+    User.find({})
+        .populate('role')
+        .exec()
+        .then(doc => {            
             res.status(200).json(
                 {
                     count: doc.length,
-                    users: doc.map(u => {
+                    users: doc.map(u => {                      
                         return {
                             _id: u._id,
                             name: u.name,
                             email: u.email,
                             city: u.city,
-                            role: u.role
+                            role: u.role.role
                         }
                     })
                 })
@@ -131,7 +134,7 @@ exports.user_deleteby_email = (req, res, next) => {
             let message = '';
             // if (doc == null)
             //     return res.json({ 'message': 'No user found.' });
-            console.log(doc.deletedCount > 0)
+            // console.log(doc.deletedCount > 0)
 
             if (doc.deletedCount > 0) {
                 message = 'User removed.'
@@ -148,7 +151,7 @@ exports.user_deleteby_email = (req, res, next) => {
             res.status(200).json(message);
         })
         .catch(err => {
-            res.status(422).json({
+            res.status(500).json({
                 error: err.message
             });
         });;

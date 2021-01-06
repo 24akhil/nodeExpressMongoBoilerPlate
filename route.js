@@ -7,9 +7,11 @@ const swaggerDoc = require('./api/middlewares/swagger.json');
 
 //#region subroutes imports
 const userRoutes = require("./api/routes/user");
+const roleRoutes = require("./api/routes/role");
 //#endregion
 
 router.use("/user", userRoutes);
+router.use("/role", roleRoutes);
 
 
 //#region swagger injection into routes

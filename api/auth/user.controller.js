@@ -88,7 +88,7 @@ exports.user_update = (req, res, next) => {
 
     User.findByIdAndUpdate(updateOps._id, updateOps)
         .then(result => {
-            return res.status(201).json(result)
+            return res.status(201).json(result);
         })
         .catch(err => {
             res.status(422).json({
@@ -97,3 +97,59 @@ exports.user_update = (req, res, next) => {
         });
 }
 
+//find by email
+exports.user_findby_email = (req, res, next) => {
+    const email = req.params.email;
+    User.findOne({ email: email })
+        .then(doc => {
+
+            if (doc == null)
+                return res.json({ 'message': 'No user found.' });
+
+            const user = {
+                'id': doc._id,
+                'name': doc.name,
+                'email': doc.email,
+                'role': doc.role,
+                'city': doc.city
+            }
+            res.status(200).json(user);
+        })
+        .catch(err => {
+            console.log(err)
+            res.status(422).json({
+                error: err.message
+            });
+        });;
+}
+
+//delete by email
+exports.user_deleteby_email = (req, res, next) => {
+    const email = req.params.email;
+    User.deleteOne({ email: email })
+        .then(doc => {
+            let message = '';
+            // if (doc == null)
+            //     return res.json({ 'message': 'No user found.' });
+            console.log(doc.deletedCount > 0)
+
+            if (doc.deletedCount > 0) {
+                message = 'User removed.'
+            } else {
+                message = 'User removing unsuccessful.'
+            }
+            // const user = {
+            //     'id': doc._id,
+            //     'name': doc.name,
+            //     'email': doc.email,
+            //     'role': doc.role,
+            //     'city': doc.city
+            // }
+            res.status(200).json(message);
+        })
+        .catch(err => {
+            res.status(422).json({
+                error: err.message
+            });
+        });;
+}
